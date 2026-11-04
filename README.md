@@ -1,4 +1,4 @@
-**App:** _paste your public app link here_
+**App:** https://cgwilson29.github.io/judge-dredd-the-model/
 
 # Judge the Model
 

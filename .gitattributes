@@ -1,2 +1,4 @@
 # Keep Bash scripts runnable on every computer, including Windows checkouts.
 *.sh text eol=lf
+# The data files are fingerprinted byte for byte: never convert their line endings (Windows checkouts included).
+data/*.csv -text

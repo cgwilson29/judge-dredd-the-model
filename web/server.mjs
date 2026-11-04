@@ -3,7 +3,7 @@
 // GitHub Pages hosts the same files without this server.
 import { createServer } from "node:http";
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { extname, join, normalize } from "node:path";
+import { extname, join, posix } from "node:path";
 import { gzipSync } from "node:zlib";
 import { fileURLToPath } from "node:url";
 
@@ -26,7 +26,8 @@ function send(req, res, file) {
 }
 
 createServer((req, res) => {
-  const path = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^\/+/, "") || "index.html";
+  // posix.normalize: URL paths use "/", even on Windows (where normalize would turn them into "\\").
+  const path = posix.normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^\/+/, "") || "index.html";
   const result = path.match(/^results\/(\w+)\.json$/);
   if (result) {
     const file = join(RESULTS, `${result[1]}.json`);

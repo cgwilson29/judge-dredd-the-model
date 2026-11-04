@@ -17,6 +17,7 @@ const WORDS = {
     posShort: "Readmitted", negShort: "Not readmitted",
     posVerb: "were readmitted within 30 days", negVerb: "were not readmitted within 30 days",
     posVerb1: "was readmitted within 30 days", posFound: "readmissions caught",
+    missedMeans: "These patients may not receive additional discharge planning or follow-up after discharge.",
   },
   diabetes: {
     who: "adults", one: "adult", aOne: "an adult",
@@ -24,6 +25,7 @@ const WORDS = {
     posShort: "Diabetes", negShort: "No diabetes",
     posVerb: "have diabetes by this label", negVerb: "do not have diabetes by this label",
     posVerb1: "has diabetes by this label", posFound: "cases found",
+    missedMeans: "For these adults, further evaluation or confirmatory testing may be delayed.",
   },
 };
 
@@ -70,6 +72,18 @@ function matrix(c, w, { small = false, label = "" } = {}) {
     </tbody></table>`;
 }
 
+// Design choice (see DECISIONS.md): show first how many real positive cases the model misses at the current
+// threshold, with what that means clinically, so the lead sees what the model fails to identify, not only its successes.
+function missedPanel(c, m, w, t, compare) {
+  const missRate = m.sensitivity === null ? null : 1 - m.sensitivity; // missed ÷ all who had the outcome
+  return `<div class="missed">
+    <p class="missed-kicker">${TEST} · missed at threshold ${fmtT(t)}</p>
+    <p class="missed-n"><strong>${int(c.fn)}</strong> of ${int(m.positives)} ${w.who} who ${w.posVerb} were <strong>not flagged</strong> (${m11.fmtPct(missRate)})</p>
+    <p class="missed-why">${esc(w.missedMeans)}</p>
+    ${compare ? `<p class="missed-cmp">${compare}</p>` : ""}
+  </div>`;
+}
+
 async function recommendations() {
   const recs = (await load("decisions"))?.recommendations || {};
   const any = Object.values(recs).some(Boolean);
@@ -107,6 +121,7 @@ function beyondAccuracy(res, model, el) {
 
   el.innerHTML = `
     <div class="callout"><strong>Positive class:</strong> ${esc(w.posName)}. ${esc(w.aOne[0].toUpperCase() + w.aOne.slice(1))} is <em>flagged</em> when the model's probability is at or above the threshold, 0.50 in this section.</div>
+    ${missedPanel(c, m, w, 0.5)}
 
     <h3>Why accuracy alone misleads</h3>
     <p>Of the ${int(m.n)} test ${w.who}, ${int(m.positives)} (${m11.fmtPct(m.prevalence)}) ${w.posVerb}.
@@ -182,6 +197,7 @@ function threshold(res, model, el) {
       <output id="t-out" for="t"></output>
       <span id="t-live" class="live" aria-live="polite"></span>
     </div>
+    <div id="missed-t"></div>
     ${caption(`${TEST} · ${name} · each dot is one test ${w.one}, placed by the model's probability; coloured dots are flagged at the chosen threshold. Drag across the strips or use the slider.`)}
     ${strips}
     <div class="legend"><span><i class="sw-pos"></i>${esc(w.posShort)}, flagged</span><span><i class="sw-neg"></i>${esc(w.negShort)}, flagged (false alarm)</span><span><i class="sw-off"></i>not flagged</span><span><i class="sw-t50"></i>0.50 for comparison</span></div>
@@ -203,6 +219,8 @@ function threshold(res, model, el) {
     el.querySelector("#t-out").textContent = fmtT(t);
     slider.value = t;
     el.querySelector("#t-live").textContent = `Sensitivity ${m11.fmtPct(m.sensitivity)} · flagged per 100: ${m.flagged_per_100.toFixed(1)}`;
+    el.querySelector("#missed-t").innerHTML = missedPanel(c, m, w, t,
+      t === 0.5 ? "" : `At 0.50 the same model misses ${int(base.fn)}: ${base.fn >= c.fn ? `${int(base.fn - c.fn)} fewer missed` : `${int(c.fn - base.fn)} more missed`} at ${fmtT(t)}.`);
     const x = X(t);
     svg.querySelector("#flag-rect").setAttribute("x", x);
     const line = svg.querySelector("#t-line");

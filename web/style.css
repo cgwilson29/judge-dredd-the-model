@@ -49,6 +49,16 @@ figure { margin: 0; }
 .qcard .d { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
 .metric { display: inline-block; margin-left: 6px; font-size: 13.5px; color: var(--muted); }
 
+/* Design choice: the missed cases, shown first */
+.missed { border: 1px solid color-mix(in srgb, var(--fn) 45%, var(--line)); border-left: 6px solid var(--fn); border-radius: 8px;
+          background: color-mix(in srgb, var(--fn) 9%, transparent); padding: 10px 16px; margin: 14px 0; }
+.missed p { margin: 4px 0; }
+.missed-kicker { color: var(--muted); font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.04em; }
+.missed-n { font-size: 1.15rem; }
+.missed-n strong:first-child { font-size: 1.9rem; color: var(--fn); font-variant-numeric: tabular-nums; margin-right: 4px; }
+.missed-why { font-weight: 600; }
+.missed-cmp { color: var(--muted); font-size: 13.5px; }
+
 /* Confusion matrices */
 table.cm { font-size: 14px; }
 table.cm td, table.cm th { text-align: center; vertical-align: middle; padding: 8px 12px; }

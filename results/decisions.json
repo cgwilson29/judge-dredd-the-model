@@ -1,11 +1,11 @@
 {
-  "exported_at": null,
-  "words": 0,
+  "exported_at": "2026-11-04T18:07:02Z",
+  "words": 187,
   "word_limit": 150,
   "sections": {
     "before_results": {
-      "readmission": "",
-      "diabetes": ""
+      "readmission": "The positive class is column 'target' identifying 30-day readmission for each patient. 1 indicates the patient was readmitted within 30 days of discharge. A missed positive error will matter more, as this would indicate that any predicted outcome of 0 that is acutally an outcome of 1 results in a preventable hospital readmission, increased morbidity, and costs. Additional monitoring or itnerventional costs to prevent readmission of a missed false alarm would be outweighed by a hosptial readmission.",
+      "diabetes": "The positive class is 'target' which identifies whether a patient was either told by their doctor they have diabetes, OR the patient has a HbA1c of >/= 6.5%, as 'target' == 1. A 'target' == 0 indicates that the patient HbA1c is below 6.5% AND the doctor did not tell the patient they have diabetes. A false alarm would matter more: a patient incorrectly labeled as having diabetes may be at increased risk of unnecessary healthcare costs, testing, or medication initiation which could lead to life threatening hypoglycemia or death. A missed positive could result in failure to manage diabetes in a patient, but overall costs are likely less detrimental."
     },
     "recommendations": {
       "readmission": "",
@@ -17,7 +17,7 @@
     }
   },
   "complete": {
-    "before_results": false,
+    "before_results": true,
     "recommendations": false,
     "design": false
   },

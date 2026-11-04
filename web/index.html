@@ -20,7 +20,10 @@
     <div class="lcars-elbow" aria-hidden="true"></div>
     <div class="lcars-title">
       <span class="lcars-kicker">Bridge</span>
-      <span class="lcars-name">Judge the Model</span>
+      <span class="lcars-bar">
+        <span class="lcars-stardate">Stardate <time id="stardate"></time></span>
+        <span class="lcars-name">NCC-2893 U.S.S. Stargazer</span>
+      </span>
     </div>
     <div class="lcars-controls">
       <button type="button" id="sound-toggle" class="lcars-pill" aria-pressed="false">Sound off</button>
@@ -29,16 +32,20 @@
   </header>
 
   <!-- Bridge view: one button per viewscreen, so every section can be opened by keyboard or screen reader. -->
+  <div class="bridge-dock">
+  <p class="bridge-banner">Judge the Model</p>
   <nav class="bridge-screens" aria-label="Open a section">
     <button type="button" class="screen-btn" data-section="1"><span class="screen-where">Port display</span><span class="screen-what">2. A Threshold for the Job</span></button>
     <button type="button" class="screen-btn screen-main" data-section="0"><span class="screen-where">Main viewscreen</span><span class="screen-what">1. Beyond Accuracy</span></button>
     <button type="button" class="screen-btn" data-section="2"><span class="screen-where">Starboard display</span><span class="screen-what">3. Training vs. Test</span></button>
   </nav>
+  </div>
 
-  <aside class="bridge-recs box" aria-labelledby="bridge-rec-h">
-    <h2 id="bridge-rec-h">Recommendations</h2>
+  <!-- Bridge view: Recommendations as a collapsible tab (they also sit at the top of every open section). -->
+  <details class="bridge-recs">
+    <summary>Recommendations</summary>
     <div id="bridge-recommendations"></div>
-  </aside>
+  </details>
 
   <div id="panel" class="panel">
     <aside class="sidebar" aria-label="Choose what to show">

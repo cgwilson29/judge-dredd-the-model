@@ -336,6 +336,22 @@ async function render() {
   RENDER[section](res, model, content);
 }
 
+// ---- stardate (decorative; not a result) ------------------------------------------
+// TNG-style stardate: (year − 1946) × 1000 + day of the year + the fraction of today that has passed,
+// in this computer's local time, cut to one decimal. 4 Nov 2026 at 15:42 → 80308.6.
+function stardate(d = new Date()) {
+  const y = d.getFullYear();
+  const dayOfYear = Math.round((Date.UTC(y, d.getMonth(), d.getDate()) - Date.UTC(y, 0, 1)) / 864e5) + 1;
+  const dayFraction = (d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds()) / 86400;
+  return (Math.floor(((y - 1946) * 1000 + dayOfYear + dayFraction) * 10) / 10).toFixed(1);
+}
+function startStardate() {
+  const el = $("stardate");
+  const tick = () => { const d = new Date(); el.textContent = stardate(d); el.dateTime = d.toISOString(); };
+  tick();
+  setInterval(tick, 10000); // the decimal moves about every 2.4 minutes
+}
+
 // ---- bridge view ---------------------------------------------------------------
 // The page starts in plain view and switches to the bridge only if three.js and WebGL start.
 const VIEW_KEY = "jtm-view";
@@ -428,6 +444,7 @@ function init() {
   $("sound-toggle").addEventListener("click", toggleSound);
   recommendations();
   render();
+  startStardate();
   startBridge();
 }
 

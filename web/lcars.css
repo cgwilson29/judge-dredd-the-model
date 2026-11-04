@@ -21,7 +21,11 @@
 /* ---- plain view: the starter layout, with a slim bar holding the view switch ---- */
 .mode-plain .lcars-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
 .mode-plain .lcars-elbow, .mode-plain .lcars-kicker { display: none; }
-.mode-plain .lcars-name { font-weight: 600; }
+.mode-plain .lcars-title, .mode-plain .lcars-bar { display: flex; align-items: baseline; gap: 16px; }
+.mode-plain .lcars-name { font-weight: 600; order: -1; }
+.mode-plain .lcars-stardate { color: var(--muted); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.bridge-dock { display: contents; }
+.bridge-banner { display: none; }
 .mode-plain .lcars-controls { display: flex; gap: 8px; }
 .mode-plain #sound-toggle { display: none; }
 .mode-plain .dedication { margin: 0; padding: 12px 16px 20px; color: var(--muted); font-size: 12.5px; text-align: center; }
@@ -37,15 +41,26 @@
 .mode-bridge .lcars-elbow { width: 140px; background: var(--lc-orange); border-radius: 30px 0 0 0; position: relative; }
 .mode-bridge .lcars-elbow::after { content: ""; position: absolute; right: 0; bottom: 0; width: 60px; height: 24px; background: #000; border-radius: 18px 0 0 0; }
 .mode-bridge .lcars-title {
-  flex: 1; display: flex; align-items: center; gap: 16px; background: linear-gradient(90deg, var(--lc-lilac) 0 22%, transparent 22% 23%, var(--lc-blue) 23% 100%);
-  border-radius: 0 999px 999px 0; height: 30px; padding: 0 18px; color: var(--lc-ink); font-family: var(--lc-font); text-transform: uppercase; letter-spacing: 0.08em;
+  flex: 1; display: flex; align-items: stretch; gap: 8px; height: 30px; min-width: 0;
+  color: var(--lc-ink); font-family: var(--lc-font); text-transform: uppercase; letter-spacing: 0.08em;
 }
-.mode-bridge .lcars-kicker { font-weight: 700; }
-.mode-bridge .lcars-name { font-weight: 700; font-size: 20px; margin-left: auto; background: #000; color: var(--lc-orange); padding: 0 12px; }
+.mode-bridge .lcars-kicker { flex: 0 0 22%; display: flex; align-items: center; padding: 0 18px; background: var(--lc-lilac); font-weight: 700; }
+.mode-bridge .lcars-bar {
+  flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 0 18px; background: var(--lc-blue); border-radius: 0 999px 999px 0;
+}
+.mode-bridge .lcars-name { font-weight: 700; font-size: 20px; white-space: nowrap; }
+.mode-bridge .lcars-stardate { font-weight: 700; font-size: 18px; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .mode-bridge .lcars-controls { display: flex; gap: 8px; align-items: flex-start; }
 
-.mode-bridge .bridge-screens {
-  display: flex; gap: 12px; position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 2;
+.mode-bridge .bridge-dock {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 2;
+}
+.mode-bridge .bridge-screens { display: flex; gap: 12px; }
+/* "Judge the Model": styled like an LCARS button, but only a label (not clickable). */
+.mode-bridge .bridge-banner {
+  display: block; margin: 0; padding: 8px 34px; border-radius: 999px; background: var(--lc-orange); color: var(--lc-ink);
+  font: 700 22px/1.1 var(--lc-font); letter-spacing: 0.1em; text-transform: uppercase; cursor: default; user-select: none;
 }
 .screen-btn {
   display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 210px; padding: 10px 22px 10px 18px; cursor: pointer;
@@ -58,11 +73,22 @@
 .screen-what { font-size: 17px; font-weight: 700; }
 
 .mode-bridge .bridge-recs {
-  display: block; position: fixed; top: 84px; right: 18px; width: min(380px, 34vw); max-height: 40vh; overflow: auto; z-index: 2;
-  background: rgba(0, 0, 0, 0.78); color: #f1f1f1; border: 0; border-left: 10px solid var(--lc-blue); border-radius: 0 16px 16px 0; padding: 4px 16px 10px;
-  font-size: 14px;
+  position: fixed; top: 84px; right: 18px; z-index: 2; width: min(400px, 34vw);
+  display: flex; flex-direction: column; align-items: flex-end;
 }
-.mode-bridge .bridge-recs h2 { font-family: var(--lc-font); text-transform: uppercase; letter-spacing: 0.06em; color: var(--lc-blue); font-size: 17px; margin: 10px 0 4px; }
+.mode-bridge .bridge-recs:not([open]) { width: auto; }
+.bridge-recs summary {
+  list-style: none; cursor: pointer; user-select: none; padding: 8px 20px 8px 16px; border-radius: 999px 0 0 999px;
+  background: var(--lc-blue); color: var(--lc-ink); font: 700 16px/1 var(--lc-font); letter-spacing: 0.08em; text-transform: uppercase;
+}
+.bridge-recs summary::-webkit-details-marker { display: none; }
+.bridge-recs summary::after { content: " \25B8"; }
+.bridge-recs[open] summary::after { content: " \25BE"; }
+.bridge-recs summary:hover { background: var(--lc-peach); }
+.mode-bridge .bridge-recs #bridge-recommendations {
+  margin-top: 8px; max-height: 46vh; overflow: auto; background: rgba(0, 0, 0, 0.82); color: #f1f1f1;
+  border-left: 10px solid var(--lc-blue); border-radius: 0 16px 16px 0; padding: 4px 16px 10px; font-size: 14px;
+}
 .mode-bridge .bridge-recs .caption { color: #c9c9c9; }
 .mode-bridge .dedication { position: fixed; left: 18px; bottom: 6px; z-index: 2; margin: 0; color: rgba(255, 204, 153, 0.75); font: 13px var(--lc-font); letter-spacing: 0.06em; text-transform: uppercase; }
 
@@ -86,14 +112,30 @@
 @media (prefers-reduced-motion: reduce) { .mode-bridge.panel-open .panel { animation: none; } }
 
 @media (max-width: 900px) {
-  .mode-bridge .bridge-screens { flex-direction: column; left: 12px; right: 12px; transform: none; bottom: 34px; }
+  .mode-bridge .bridge-dock { left: 12px; right: 12px; transform: none; bottom: 34px; align-items: stretch; }
+  .mode-bridge .bridge-screens { flex-direction: column; }
+  .mode-bridge .bridge-banner { text-align: center; font-size: 18px; }
+  .mode-bridge .lcars-stardate { font-size: 14px; }
   .screen-btn { min-width: 0; }
-  .mode-bridge .bridge-recs { top: auto; bottom: auto; position: fixed; top: 70px; left: 12px; right: 12px; width: auto; max-height: 22vh; }
+  .mode-bridge .bridge-recs { top: 70px; left: auto; right: 12px; width: calc(100vw - 24px); }
+  .mode-bridge .bridge-recs #bridge-recommendations { max-height: 34vh; }
   .mode-bridge .lcars-elbow { width: 40px; }
   .mode-bridge .lcars-kicker { display: none; }
-  .mode-bridge .lcars-name { font-size: 15px; white-space: nowrap; }
+  .mode-bridge .lcars-name { font-size: 13px; }
+  .mode-bridge .lcars-bar { padding: 0 12px; }
   .mode-bridge .lcars-title { padding: 0 8px; min-width: 0; }
   .lcars-pill { padding: 8px 12px; font-size: 12px; white-space: nowrap; }
   .mode-bridge.panel-open .panel { left: 0; right: 0; bottom: 0; border-left-width: 8px; border-radius: 16px 0 0 0; grid-template-columns: 1fr; background: var(--bg); }
   .mode-bridge .panel .sidebar { position: static; }
+}
+
+/* Phones: the ship name, stardate and the two switches don't fit on one line, so the switches drop to a second row. */
+@media (max-width: 600px) {
+  .mode-bridge .lcars-top { flex-wrap: wrap; height: auto; row-gap: 6px; }
+  .mode-bridge .lcars-elbow { height: 30px; border-radius: 16px 0 0 0; }
+  .mode-bridge .lcars-elbow::after { display: none; }
+  .mode-bridge .lcars-controls { width: 100%; justify-content: flex-end; }
+  .mode-bridge .bridge-recs { top: 92px; }
+  .mode-bridge.panel-open .panel { top: 92px; }
+  .mode-bridge .lcars-stardate { font-size: 13px; }
 }

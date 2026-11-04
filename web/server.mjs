@@ -5,9 +5,11 @@ import { createServer } from "node:http";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
 import { gzipSync } from "node:zlib";
+import { fileURLToPath } from "node:url";
 
-const WEB = new URL(".", import.meta.url).pathname;
-const RESULTS = new URL("../results/", import.meta.url).pathname;
+// fileURLToPath (not URL.pathname) so folders with spaces and Windows drive letters work.
+const WEB = fileURLToPath(new URL(".", import.meta.url));
+const RESULTS = fileURLToPath(new URL("../results/", import.meta.url));
 const PORT = Number(process.argv[2] || 8766);
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8",
                 ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8", ".svg": "image/svg+xml",

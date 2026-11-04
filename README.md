@@ -30,6 +30,9 @@ Your AI agent writes the code; you make the decisions, check the results and wri
 | `m11.py` | The shared metric helpers: every number comes from these |
 | `streamlit_app.py`, `requirements.txt` | Your app if you choose Streamlit, hosted on Streamlit Community Cloud |
 | `web/`, `package.json` | Your app if you choose Node.js (`web/app.js`, with the metric helpers in `web/m11.js`), hosted on GitHub Pages (`index.html` and `.nojekyll` at the top level are for Pages) |
+| `web/bridge.js`, `web/lcars.css`, `web/audio.js` | The bridge view: an original, fan-made starship bridge (three.js) inspired by *Star Trek: The Next Generation*, dedicated to Sir Patrick Stewart. Decorative only: clicking a viewscreen opens a section, and **Plain view** turns it off. Sound is synthesized and off by default. Not affiliated with or endorsed by Paramount. |
+| `web/vendor/three/` | three.js r187 (MIT licence, `LICENSE` inside), saved here because GitHub Pages has no npm |
+| `web/assets/fonts/` | Antonio font (SIL Open Font License, `OFL-LICENSE.txt`) |
 | `results/` | What the analysis exports; the app reads only these files |
 | `data/` | The two datasets, the dictionary (`data/README.md`) and `manifest.json` |
 | `check.py` | Integrity checks: `python check.py` must pass before you submit |

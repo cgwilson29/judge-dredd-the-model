@@ -1,0 +1,99 @@
+/* The bridge frame: an original LCARS-style look. Plain view (body.mode-plain) hides all of it. */
+@font-face { font-family: "Antonio"; src: url("assets/fonts/antonio-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Antonio"; src: url("assets/fonts/antonio-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+
+:root {
+  --lc-orange: #ff9c00; --lc-peach: #ffcc99; --lc-lilac: #cc99cc; --lc-blue: #9ab4ff; --lc-red: #e0705f; --lc-ink: #000;
+  --lc-font: "Antonio", "Arial Narrow", "Roboto Condensed", sans-serif;
+}
+
+/* ---- shared pieces ---- */
+.lcars-pill {
+  font: 600 14px/1 var(--lc-font); letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--lc-peach); color: var(--lc-ink); border: 0; border-radius: 999px; padding: 9px 18px; cursor: pointer;
+}
+.lcars-pill:hover { background: var(--lc-orange); }
+.lcars-pill[aria-pressed="true"] { background: var(--lc-blue); }
+:where(button, select, input, [tabindex]):focus-visible { outline: 3px solid var(--lc-blue); outline-offset: 2px; }
+#bridge-canvas { display: none; }
+.bridge-screens, .bridge-recs, .return-bridge { display: none; }
+
+/* ---- plain view: the starter layout, with a slim bar holding the view switch ---- */
+.mode-plain .lcars-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.mode-plain .lcars-elbow, .mode-plain .lcars-kicker { display: none; }
+.mode-plain .lcars-name { font-weight: 600; }
+.mode-plain .lcars-controls { display: flex; gap: 8px; }
+.mode-plain #sound-toggle { display: none; }
+.mode-plain .dedication { margin: 0; padding: 12px 16px 20px; color: var(--muted); font-size: 12.5px; text-align: center; }
+
+/* ---- bridge view ---- */
+.mode-bridge { background: #000; overflow: hidden; }
+.mode-bridge #bridge-canvas { display: block; position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; }
+.mode-bridge .lcars-top {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 3; display: flex; align-items: stretch; gap: 10px; height: 64px; padding: 10px 14px 0;
+  pointer-events: none;
+}
+.mode-bridge .lcars-top > * { pointer-events: auto; }
+.mode-bridge .lcars-elbow { width: 140px; background: var(--lc-orange); border-radius: 30px 0 0 0; position: relative; }
+.mode-bridge .lcars-elbow::after { content: ""; position: absolute; right: 0; bottom: 0; width: 60px; height: 24px; background: #000; border-radius: 18px 0 0 0; }
+.mode-bridge .lcars-title {
+  flex: 1; display: flex; align-items: center; gap: 16px; background: linear-gradient(90deg, var(--lc-lilac) 0 22%, transparent 22% 23%, var(--lc-blue) 23% 100%);
+  border-radius: 0 999px 999px 0; height: 30px; padding: 0 18px; color: var(--lc-ink); font-family: var(--lc-font); text-transform: uppercase; letter-spacing: 0.08em;
+}
+.mode-bridge .lcars-kicker { font-weight: 700; }
+.mode-bridge .lcars-name { font-weight: 700; font-size: 20px; margin-left: auto; background: #000; color: var(--lc-orange); padding: 0 12px; }
+.mode-bridge .lcars-controls { display: flex; gap: 8px; align-items: flex-start; }
+
+.mode-bridge .bridge-screens {
+  display: flex; gap: 12px; position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 2;
+}
+.screen-btn {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 210px; padding: 10px 22px 10px 18px; cursor: pointer;
+  background: rgba(0, 0, 0, 0.72); color: var(--lc-peach); border: 0; border-left: 14px solid var(--lc-lilac); border-radius: 0 999px 999px 0;
+  font-family: var(--lc-font); text-transform: uppercase; letter-spacing: 0.05em; text-align: left;
+}
+.screen-btn.screen-main { border-left-color: var(--lc-orange); }
+.screen-btn:hover { background: rgba(40, 24, 0, 0.88); color: #fff; }
+.screen-where { font-size: 12px; color: var(--lc-blue); }
+.screen-what { font-size: 17px; font-weight: 700; }
+
+.mode-bridge .bridge-recs {
+  display: block; position: fixed; top: 84px; right: 18px; width: min(380px, 34vw); max-height: 40vh; overflow: auto; z-index: 2;
+  background: rgba(0, 0, 0, 0.78); color: #f1f1f1; border: 0; border-left: 10px solid var(--lc-blue); border-radius: 0 16px 16px 0; padding: 4px 16px 10px;
+  font-size: 14px;
+}
+.mode-bridge .bridge-recs h2 { font-family: var(--lc-font); text-transform: uppercase; letter-spacing: 0.06em; color: var(--lc-blue); font-size: 17px; margin: 10px 0 4px; }
+.mode-bridge .bridge-recs .caption { color: #c9c9c9; }
+.mode-bridge .dedication { position: fixed; left: 18px; bottom: 6px; z-index: 2; margin: 0; color: rgba(255, 204, 153, 0.75); font: 13px var(--lc-font); letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* The section panel: hidden on the bridge until a viewscreen opens it. Dark, high-contrast and in the system font, so it reads cold. */
+.mode-bridge .panel { display: none; }
+.mode-bridge.panel-open .panel {
+  display: grid; position: fixed; z-index: 4; top: 70px; left: 2.5vw; right: 2.5vw; bottom: 2.5vh; min-height: 0; overflow: auto;
+  border-left: 18px solid var(--lc-orange); border-radius: 28px 0 0 28px; box-shadow: 0 0 0 1px #333, 0 10px 60px rgba(0, 0, 0, 0.8);
+  --bg: #0d1117; --fg: #e6edf3; --muted: #a3abb4; --line: #3d444d; --panel: #151b23;
+  --accent: #6aa8ff; --pos: #fb923c; --neg: #60a5fa; --train: #a78bfa; --test: #2dd4bf;
+  --tp: #4ade80; --fn: #f87171; --fp: #fbbf24; --tn: #94a3b8; --off: #59636e;
+  background: var(--bg); color: var(--fg); animation: panel-in 220ms ease-out;
+}
+.mode-bridge.panel-open .bridge-screens, .mode-bridge.panel-open .bridge-recs { display: none; }
+.mode-bridge.panel-open .return-bridge { display: block; width: 100%; margin: 0 0 12px; }
+.mode-bridge.panel-open .panel { background: linear-gradient(90deg, var(--panel) 240px, var(--bg) 240px); }
+.mode-bridge .panel .sidebar { position: sticky; top: 0; align-self: start; border-right: 0; }
+.mode-bridge .panel main h1 { font-family: var(--lc-font); text-transform: uppercase; letter-spacing: 0.06em; color: var(--lc-orange); }
+.mode-bridge .panel #section-title { font-family: var(--lc-font); letter-spacing: 0.04em; color: var(--lc-peach); font-size: 1.6rem; }
+@keyframes panel-in { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mode-bridge.panel-open .panel { animation: none; } }
+
+@media (max-width: 900px) {
+  .mode-bridge .bridge-screens { flex-direction: column; left: 12px; right: 12px; transform: none; bottom: 34px; }
+  .screen-btn { min-width: 0; }
+  .mode-bridge .bridge-recs { top: auto; bottom: auto; position: fixed; top: 70px; left: 12px; right: 12px; width: auto; max-height: 22vh; }
+  .mode-bridge .lcars-elbow { width: 40px; }
+  .mode-bridge .lcars-kicker { display: none; }
+  .mode-bridge .lcars-name { font-size: 15px; white-space: nowrap; }
+  .mode-bridge .lcars-title { padding: 0 8px; min-width: 0; }
+  .lcars-pill { padding: 8px 12px; font-size: 12px; white-space: nowrap; }
+  .mode-bridge.panel-open .panel { left: 0; right: 0; bottom: 0; border-left-width: 8px; border-radius: 16px 0 0 0; grid-template-columns: 1fr; background: var(--bg); }
+  .mode-bridge .panel .sidebar { position: static; }
+}
